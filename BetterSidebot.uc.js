@@ -26,15 +26,15 @@
         { id: 'chatgpt',    name: 'ChatGPT',     url: 'https://chatgpt.com',          icon: 'chatgpt.png' },
         { id: 'claude',     name: 'Claude',      url: 'https://claude.ai',            icon: 'claude.png' },
         { id: 'gemini',     name: 'Gemini',      url: 'https://aistudio.google.com',  icon: 'gemini.png' },
-        { id: 'deepseek',   name: 'DeepSeek',    url: 'https://chat.deepseek.com',    icon: 'deepseek.png' },
         { id: 'grok',       name: 'Grok',        url: 'https://grok.com',             icon: 'grok.png' },
-        { id: 'kimi',       name: 'Kimi',        url: 'https://kimi.com',             icon: 'kimi.png' },
-        { id: 'qwen',       name: 'Qwen',        url: 'https://chat.qwen.ai',         icon: 'qwen.png' },
-        { id: 'lechat',     name: 'Le Chat',     url: 'https://chat.mistral.ai',      icon: 'LeChat.png' },
         { id: 'metaai',     name: 'Meta AI',     url: 'https://meta.ai',              icon: 'metaai.png' },
-        { id: 'lmarena',    name: 'LMArena',     url: 'https://lmarena.ai',           icon: 'LMArena.png' },
+        { id: 'kimi',       name: 'Kimi',        url: 'https://kimi.com',             icon: 'kimi.png' },
+        { id: 'deepseek',   name: 'DeepSeek',    url: 'https://chat.deepseek.com',    icon: 'deepseek.png' },
+        { id: 'qwen',       name: 'Qwen',        url: 'https://chat.qwen.ai',         icon: 'qwen.png' },
         { id: 'zai',        name: 'Z.AI',        url: 'https://z.ai',                 icon: 'zai.png' },
+        { id: 'lechat',     name: 'Le Chat',     url: 'https://chat.mistral.ai',      icon: 'LeChat.png' },
         { id: 'lumo',       name: 'Lumo',        url: 'https://lumo.proton.me',       icon: 'lumo.png' },
+        { id: 'lmarena',    name: 'LMArena',     url: 'https://lmarena.ai',           icon: 'LMArena.png' },
     ];
 
     const ICONS_DIR = PathUtils.join(PathUtils.profileDir, 'chrome', 'sine-mods', 'BetterSidebot', 'icons');
