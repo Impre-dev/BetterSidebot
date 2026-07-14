@@ -27,9 +27,14 @@ html[chat-sidebar-visible="true"] #sidebar-box {
     box-shadow: none !important;
 }
 
-/* Quand la sidebar est masquée, neutraliser le gap laissé par le sidebar-splitter */
-html:not([chat-sidebar-visible="true"]) #zen-tabbox-wrapper #sidebar-splitter {
+/* sidebar-splitter : valeur par défaut (+2px) */
+#zen-tabbox-wrapper #sidebar-splitter {
     margin: 0 calc(-1 * var(--zen-element-separation) + 2px) !important;
+}
+
+/* sidebar-splitter : quand sidebar masquée (+3px pour neutraliser le gap) */
+html:not([chat-sidebar-visible="true"]) #zen-tabbox-wrapper #sidebar-splitter {
+    margin: 0 calc(-1 * var(--zen-element-separation) + 3px) !important;
 }
 
 /* ────────────────────────────────────────────────────────────────
