@@ -1,6 +1,31 @@
+
+
 /* ═══════════════════════════════════════════════════════════════
    BetterSidebot — chrome.css
    ═══════════════════════════════════════════════════════════════ */
+
+
+/* ┌──────────────────────────────────────┐ */
+/* │ Fullscreen fixe                      │ */
+/* └──────────────────────────────────────┘ */
+
+/* Masque la bordure gauche quand une vidéo est en plein écran */
+:root[inDOMFullscreen] #sidebar-main,
+:root[inDOMFullscreen] #sidebar-splitter,
+:root[inDOMFullscreen] #sidebar-launcher-splitter,
+:root[inFullscreen]:not([macOSNativeFullscreen]) toolbar:not([fullscreentoolbar="true"]) {
+  visibility: hidden !important;
+}
+
+/* Masque le petit bout de l'urlbar quand une vidéo est en plein écran */
+:root[inDOMFullscreen="true"] .urlbar-input-container {
+  display: none !important;
+}
+
+/* Neutraliser les margins du splitter en fullscreen (visibility:hidden garde la place) */
+:root[inDOMFullscreen] #zen-tabbox-wrapper #sidebar-splitter {
+    display: none !important;
+}
 
 /* ────────────────────────────────────────────────────────────────
    1. SIDEBAR TOGGLE — display:none préserve le browser en vie
