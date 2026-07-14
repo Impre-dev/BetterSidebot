@@ -34,7 +34,7 @@ html[chat-sidebar-visible="true"] #sidebar-box {
 
 /* sidebar-splitter : quand sidebar masquée (+3px pour neutraliser le gap) */
 html:not([chat-sidebar-visible="true"]) #zen-tabbox-wrapper #sidebar-splitter {
-    margin: 0 calc(-1 * var(--zen-element-separation) + 3px) !important;
+    margin: 0 calc(-1 * var(--zen-element-separation) + 2.7px) !important;
 }
 
 /* ────────────────────────────────────────────────────────────────
