@@ -22,12 +22,6 @@ html[chat-sidebar-visible="true"] #sidebar-box {
     display: flex !important;
 }
 
-/* Ajuster la largeur de la sidebar (pas trop large) */
-html[chat-sidebar-visible="true"] #sidebar-box {
-    max-width: 480px !important;
-    min-width: 320px !important;
-}
-
 /* ────────────────────────────────────────────────────────────────
    2. BANDEAU FLOTTANT — position:absolute sur #browser
    ──────────────────────────────────────────────────────────────── */

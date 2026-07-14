@@ -109,6 +109,16 @@
             box.hidden = false;
             box.removeAttribute('hidden');
 
+            // Forcer le chargement du browser sidebar après un court délai
+            // (au démarrage, le browser peut ne pas se charger automatiquement)
+            setTimeout(() => {
+                const sidebarBrowser = document.getElementById('sidebar');
+                if (sidebarBrowser) {
+                    sidebarBrowser.reload();
+                    this.log('sidebar browser reloaded after un-hide');
+                }
+            }, 1500);
+
             this.log('sidebar-box un-hidden — browser stays loaded');
         },
 
@@ -268,25 +278,18 @@
         // ── registerShortcut ─────────────────────────────
         // Crée un <key> dans #zenKeyset
         registerShortcut() {
-            const keyset = document.getElementById('zenKeyset');
-            if (!keyset) {
-                this.log('#zenKeyset not found, retrying...');
-                setTimeout(() => this.registerShortcut(), 1000);
-                return;
-            }
+            if (window.__BetterSidebotShortcut) return;
+            window.__BetterSidebotShortcut = true;
 
-            // Éviter double enregistrement
-            if (document.getElementById('bettersidebot-toggle-key')) return;
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.shiftKey && (e.key === 'b' || e.key === 'B')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.toggleSidebar();
+                }
+            });
 
-            const key = document.createXULElement('key');
-            key.id = 'bettersidebot-toggle-key';
-            key.setAttribute('modifiers', SHORTCUT_MODIFIERS);
-            key.setAttribute('key', SHORTCUT_KEY);
-            key.setAttribute('oncommand', 'void 0');
-            key.addEventListener('command', () => this.toggleSidebar());
-            keyset.appendChild(key);
-
-            this.log('shortcut registered: Ctrl+Shift+' + SHORTCUT_KEY);
+            this.log('shortcut registered: Ctrl+Shift+B (keydown listener)');
         },
 
         // ═══════════════════════════════════════════════
