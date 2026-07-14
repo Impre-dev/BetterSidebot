@@ -1,0 +1,18 @@
+{
+  "id": "BetterSidebot",
+  "name": "BetterSidebot",
+  "description": "Bandeau flottant pour switcher entre tous tes chatbots dans la sidebar Zen",
+  "author": "Impre",
+  "version": "1.0.0",
+  "js": true,
+  "scripts": {
+    "BetterSidebot.uc.js": {
+      "name": "BetterSidebot Engine",
+      "description": "Bandeau chatbot + toggle sidebar + raccourci clavier",
+      "include": ["chrome://browser/content/browser.xhtml"]
+    }
+  },
+  "style": { "chrome": "chrome.css" },
+  "tags": ["Javascript"],
+  "fork": ["zen"]
+}

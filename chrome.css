@@ -1,0 +1,124 @@
+/* ═══════════════════════════════════════════════════════════════
+   BetterSidebot — chrome.css
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ────────────────────────────────────────────────────────────────
+   1. SIDEBAR TOGGLE — display:none préserve le browser en vie
+   ──────────────────────────────────────────────────────────────── */
+
+/* Cacher le header natif de la sidebar (on gère notre propre UI) */
+#sidebar-header,
+#sidebar .sidebar-browser-stack > #sidebar-box > #header {
+    display: none !important;
+}
+
+/* Sidebar cachée par défaut, visible si l'attribut est présent */
+html:not([chat-sidebar-visible="true"]) #sidebar-box {
+    display: none !important;
+}
+
+/* Quand visible, s'assurer qu'elle est en flex */
+html[chat-sidebar-visible="true"] #sidebar-box {
+    display: flex !important;
+}
+
+/* Ajuster la largeur de la sidebar (pas trop large) */
+html[chat-sidebar-visible="true"] #sidebar-box {
+    max-width: 480px !important;
+    min-width: 320px !important;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   2. BANDEAU FLOTTANT — position:absolute sur #browser
+   ──────────────────────────────────────────────────────────────── */
+
+/* Container wrapper — positionné en absolu sur #browser */
+#chat-dock-wrapper {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    height: 100% !important;
+    z-index: 9998 !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* Zone hover invisible (3px bord gauche) */
+#chat-hover-zone {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 3px !important;
+    height: 100% !important;
+    z-index: 9998 !important;
+    background: transparent !important;
+}
+
+/* Bandeau — caché par défaut, slide-in au hover */
+#chatbot-switcher {
+    position: absolute !important;
+    left: 3px !important;
+    top: 50% !important;
+    transform: translateY(-50%) translateX(-110%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: transform 0.2s ease, opacity 0.2s ease !important;
+    z-index: 9999 !important;
+
+    /* Style visuel */
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    padding: 8px 6px !important;
+    background: var(--zen-colors-sidebar-background, #1a1a1a) !important;
+    border-radius: 0 8px 8px 0 !important;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Hover reveal — souris sur la zone OU sur le bandeau */
+#chat-hover-zone:hover ~ #chatbot-switcher,
+#chatbot-switcher:hover {
+    transform: translateY(-50%) translateX(0) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   3. BOUTONS CHATBOT
+   ──────────────────────────────────────────────────────────────── */
+
+.chatbot-btn {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    border: 2px solid transparent !important;
+    transition: border-color 0.15s, background 0.15s !important;
+    appearance: none !important;
+    -moz-appearance: none !important;
+}
+
+.chatbot-btn image {
+    width: 24px !important;
+    height: 24px !important;
+    margin: auto !important;
+    object-fit: contain !important;
+    border-radius: 4px !important;
+}
+
+.chatbot-btn:hover {
+    background: rgba(128, 128, 128, 0.25) !important;
+}
+
+.chatbot-btn:active {
+    background: rgba(128, 128, 128, 0.4) !important;
+}
+
+.chatbot-btn.active {
+    border-color: var(--zen-primary-color, #00ff88) !important;
+    background: rgba(128, 128, 128, 0.2) !important;
+}
