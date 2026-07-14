@@ -22,6 +22,16 @@ html[chat-sidebar-visible="true"] #sidebar-box {
     display: flex !important;
 }
 
+/* Retirer le box-shadow natif du sidebar-box */
+#zen-tabbox-wrapper #sidebar-box {
+    box-shadow: none !important;
+}
+
+/* Quand la sidebar est masquée, neutraliser le gap laissé par le sidebar-splitter */
+html:not([chat-sidebar-visible="true"]) #zen-tabbox-wrapper #sidebar-splitter {
+    margin: 0 calc(-1 * var(--zen-element-separation) + 2px) !important;
+}
+
 /* ────────────────────────────────────────────────────────────────
    2. BANDEAU FLOTTANT — position:absolute sur #browser
    ──────────────────────────────────────────────────────────────── */
