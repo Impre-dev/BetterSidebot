@@ -16,9 +16,9 @@
     const PREF_PROVIDER = 'browser.ml.chat.provider';
     const PREF_VISIBLE  = 'extensions.zen.bettersidebot.visible';
 
-    // Raccourci clavier : Ctrl+Shift+B
-    const SHORTCUT_KEY        = 'B';
-    const SHORTCUT_MODIFIERS  = 'accel shift';
+    // Raccourci clavier : Alt+K
+    const SHORTCUT_KEY        = 'K';
+    const SHORTCUT_MODIFIERS  = 'alt';
 
     // Les 13 chatbots — l'ordre = l'ordre d'affichage dans le bandeau
     const CHATBOTS = [
@@ -282,14 +282,14 @@
             window.__BetterSidebotShortcut = true;
 
             document.addEventListener('keydown', (e) => {
-                if (e.ctrlKey && e.shiftKey && (e.key === 'b' || e.key === 'B')) {
+                if (e.altKey && !e.ctrlKey && !e.shiftKey && (e.key === 'k' || e.key === 'K')) {
                     e.preventDefault();
                     e.stopPropagation();
                     this.toggleSidebar();
                 }
             });
 
-            this.log('shortcut registered: Ctrl+Shift+B (keydown listener)');
+            this.log('shortcut registered: Alt+K (keydown listener)');
         },
 
         // ═══════════════════════════════════════════════
