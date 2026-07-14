@@ -81,9 +81,8 @@ html:not([chat-sidebar-visible="true"]) #zen-tabbox-wrapper #sidebar-splitter {
     flex-direction: column !important;
     gap: 4px !important;
     padding: 8px 6px !important;
-    background: linear-gradient(135deg, #f2fff0 0%, #f9fff8 50%, #dcfff9 100%) !important;
-    border-radius: 0 8px 8px 0 !important;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3) !important;
+    background: #5FE4BB !important;
+    border-radius: 0 4px 4px 0 !important;
 }
 
 /* Hover reveal — souris sur la zone OU sur le bandeau */
@@ -130,6 +129,5 @@ html:not([chat-sidebar-visible="true"]) #zen-tabbox-wrapper #sidebar-splitter {
 }
 
 .chatbot-btn.active {
-    border-color: var(--zen-primary-color, #00ff88) !important;
-    background: rgba(128, 128, 128, 0.2) !important;
+    background: rgba(255, 255, 255, 0.60) !important;
 }
