@@ -81,8 +81,7 @@ html:not([chat-sidebar-visible="true"]) #zen-tabbox-wrapper #sidebar-splitter {
     flex-direction: column !important;
     gap: 4px !important;
     padding: 8px 6px !important;
-    /* Fallback — overridden by syncThemeColor() at runtime */
-    background: #5FE4BB;
+    background: #5FE4BB !important;
     border-radius: 0 4px 4px 0 !important;
 }
 

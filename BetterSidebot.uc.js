@@ -79,10 +79,6 @@
             // 6. Observer les changements de pref (si changés via about:config)
             this.observeProviderPref();
 
-            // 7. Synchroniser la couleur du bandeau avec le thème Zen
-            this.syncThemeColor();
-            this.observeThemeChanges();
-
             this.log('initialized ✅ — ' + CHATBOTS.length + ' bots ready');
         },
 
@@ -294,79 +290,6 @@
             });
 
             this.log('shortcut registered: Ctrl+Shift+B (keydown listener)');
-        },
-
-        // ═══════════════════════════════════════════════
-        // THEME SYNC — couleur dynamique depuis le thème Zen
-        // ═══════════════════════════════════════════════
-
-        // ── syncThemeColor ───────────────────────────────
-        // Lit la couleur dominante du thème Zen depuis
-        // #PanelUI-zen-gradient-generator-color-pages
-        // et l'applique au bandeau. Ces éléments sont toujours
-        // dans le DOM même quand le panel est fermé.
-        syncThemeColor() {
-            const pages = document.getElementById('PanelUI-zen-gradient-generator-color-pages');
-            if (!pages) {
-                // Le panel n'existe pas encore, réessayer plus tard
-                setTimeout(() => this.syncThemeColor(), 2000);
-                return;
-            }
-
-            let bestColor = null;
-            let bestLum = 0;
-
-            for (const box of pages.querySelectorAll('box')) {
-                const bg = getComputedStyle(box).backgroundColor;
-                const nums = bg.match(/\d+/g);
-                if (!nums || nums.length < 3) continue;
-                const [r, g, b] = nums.map(Number);
-                const lum = (r + g + b) / 3;
-                if (lum > bestLum) {
-                    bestLum = lum;
-                    bestColor = bg;
-                }
-            }
-
-            if (bestColor) {
-                const switcher = document.getElementById('chatbot-switcher');
-                if (switcher) {
-                    switcher.style.backgroundColor = bestColor;
-                    this.log('theme color synced: ' + bestColor);
-                }
-            }
-        },
-
-        // ── observeThemeChanges ──────────────────────────
-        // Observe les changements de thème Zen pour re-sync la couleur.
-        // Utilise un MutationObserver sur le <html> (Zen y injecte --zen-primary-color)
-        // + observe les changements de workspace (chaque ws peut avoir un thème différent).
-        observeThemeChanges() {
-            if (window.__BetterSidebotThemeObserver) return;
-            window.__BetterSidebotThemeObserver = true;
-
-            // 1. MutationObserver sur les attributs de <html>
-            //    Zen met à jour --zen-primary-color en inline style
-            const observer = new MutationObserver(() => {
-                this.syncThemeColor();
-            });
-            observer.observe(document.documentElement, {
-                attributes: true,
-                attributeFilter: ['style'],
-            });
-
-            // 2. Observer les changements de workspace
-            //    Zen utilise un attribut sur le documentElement
-            const wsObserver = new MutationObserver(() => {
-                // Délai pour laisser Zen appliquer le nouveau thème
-                setTimeout(() => this.syncThemeColor(), 300);
-            });
-            wsObserver.observe(document.documentElement, {
-                attributes: true,
-                attributeFilter: ['zen-workspace-id', 'data-zen-workspace'],
-            });
-
-            this.log('theme change observer installed');
         },
 
         // ═══════════════════════════════════════════════
