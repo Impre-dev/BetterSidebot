@@ -314,16 +314,20 @@
             }
 
             let bestColor = null;
-            let bestLum = 0;
+            let bestSat = 0;
 
             for (const box of pages.querySelectorAll('box')) {
                 const bg = getComputedStyle(box).backgroundColor;
                 const nums = bg.match(/\d+/g);
                 if (!nums || nums.length < 3) continue;
                 const [r, g, b] = nums.map(Number);
-                const lum = (r + g + b) / 3;
-                if (lum > bestLum) {
-                    bestLum = lum;
+                // Saturation = écart max-min / max → favorise les couleurs vives
+                // vs les tons pastel/beige qui ont une saturation faible
+                const max = Math.max(r, g, b);
+                const min = Math.min(r, g, b);
+                const sat = max === 0 ? 0 : (max - min) / max;
+                if (sat > bestSat) {
+                    bestSat = sat;
                     bestColor = bg;
                 }
             }
