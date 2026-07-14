@@ -107,7 +107,8 @@ html:not([chat-sidebar-visible="true"]) #zen-tabbox-wrapper #sidebar-splitter {
     gap: 3px !important;
     padding: 6px 5px !important;
     background: #feca52 !important;
-    background: linear-gradient(180deg, #ffd779 0%, #e4a85f 50%, #e46c5f 100%) !important;
+    background: linear-gradient(180deg, #6CEB59 0%, #5FE4BB 50%, #64B2E0 100%) !important;
+    background: linear-gradient(180deg, #5FE4BB 0%, #5FE4BB 60%, #64B2E0 100%) !important;
     border-radius: 0 4px 4px 0 !important;
 }
 
