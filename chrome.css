@@ -79,8 +79,8 @@ html:not([chat-sidebar-visible="true"]) #zen-tabbox-wrapper #sidebar-splitter {
     /* Style visuel */
     display: flex !important;
     flex-direction: column !important;
-    gap: 4px !important;
-    padding: 8px 6px !important;
+    gap: 3px !important;
+    padding: 6px 5px !important;
     background: #5FE4BB !important;
     border-radius: 0 4px 4px 0 !important;
 }
@@ -98,10 +98,10 @@ html:not([chat-sidebar-visible="true"]) #zen-tabbox-wrapper #sidebar-splitter {
    ──────────────────────────────────────────────────────────────── */
 
 .chatbot-btn {
-    width: 48px !important;
-    height: 48px !important;
-    min-width: 48px !important;
-    min-height: 48px !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
     padding: 0 !important;
     margin: 0 !important;
     border-radius: 8px !important;
@@ -113,8 +113,8 @@ html:not([chat-sidebar-visible="true"]) #zen-tabbox-wrapper #sidebar-splitter {
 }
 
 .chatbot-btn image {
-    width: 36px !important;
-    height: 36px !important;
+    width: 29px !important;
+    height: 29px !important;
     margin: auto !important;
     object-fit: contain !important;
     border-radius: 6px !important;
