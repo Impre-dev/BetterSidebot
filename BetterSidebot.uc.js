@@ -23,9 +23,9 @@
     // Les 13 chatbots — l'ordre = l'ordre d'affichage dans le bandeau
     const CHATBOTS = [
         { id: 'perplexity', name: 'Perplexity',  url: 'https://www.perplexity.ai',   icon: 'perplexity.png' },
-        { id: 'chatgpt',    name: 'ChatGPT',     url: 'https://chatgpt.com',          icon: 'chatgpt.png' },
-        { id: 'claude',     name: 'Claude',      url: 'https://claude.ai',            icon: 'claude.png' },
         { id: 'gemini',     name: 'Gemini',      url: 'https://aistudio.google.com',  icon: 'gemini.png' },
+        { id: 'claude',     name: 'Claude',      url: 'https://claude.ai',            icon: 'claude.png' },
+        { id: 'chatgpt',    name: 'ChatGPT',     url: 'https://chatgpt.com',          icon: 'chatgpt.png' },
         { id: 'grok',       name: 'Grok',        url: 'https://grok.com',             icon: 'grok.png' },
         { id: 'metaai',     name: 'Meta AI',     url: 'https://meta.ai',              icon: 'metaai.png' },
         { id: 'kimi',       name: 'Kimi',        url: 'https://kimi.com',             icon: 'kimi.png' },
