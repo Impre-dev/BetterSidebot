@@ -67,16 +67,19 @@
             // 2. Garantir que la sidebar chat est en vie (retirer hidden natif)
             this.ensureSidebarLoaded();
 
-            // 3. Injecter le bandeau flottant + zone hover
-            this.createBandeau();
+            // 3. Injecter le dock flottant (bottom-center)
+            this.createDock();
 
-            // 4. Enregistrer le raccourci clavier
+            // 4. Observer la pref zen.urlbar.behavior pour show/hide le dock
+            this.observeUrlbarPref();
+
+            // 5. Enregistrer le raccourci clavier
             this.registerShortcut();
 
-            // 5. Marquer le bot actif
+            // 6. Marquer le bot actif
             this.markActiveBot();
 
-            // 6. Observer les changements de pref (si changés via about:config)
+            // 7. Observer les changements de pref (si changés via about:config)
             this.observeProviderPref();
 
             this.log('initialized ✅ — ' + CHATBOTS.length + ' bots ready');
@@ -152,35 +155,26 @@
         },
 
         // ═══════════════════════════════════════════════
-        // BANDEAU
+        // DOCK FLOTTANT (bottom-center, show/hide via pref URLBar-2.0)
         // ═══════════════════════════════════════════════
 
-        // ── createBandeau ────────────────────────────────
-        // Crée le bandeau flottant + zone hover et les injecte dans #browser
-        createBandeau() {
-            // Éviter double injection
+        // ── createDock ───────────────────────────────────
+        // Crée le dock horizontal (bottom-center) et l'injecte dans #browser
+        // Show/hide contrôlé par l'attribut HTML chat-dock-visible
+        // (défini par observeUrlbarPref qui écoute zen.urlbar.behavior)
+        createDock() {
             if (document.getElementById('chat-dock-wrapper')) return;
 
-            const browser = document.getElementById('browser');
-            if (!browser) {
+            const browserEl = document.getElementById('browser');
+            if (!browserEl) {
                 this.log('#browser not found, retrying...');
-                setTimeout(() => this.createBandeau(), 500);
+                setTimeout(() => this.createDock(), 500);
                 return;
             }
 
-            // Container wrapper (position:absolute parent)
-            const wrapper = document.createXULElement('hbox');
-            wrapper.id = 'chat-dock-wrapper';
+            const dock = document.createXULElement('hbox');
+            dock.id = 'chat-dock-wrapper';
 
-            // Zone hover invisible (3px bord gauche)
-            const hoverZone = document.createXULElement('box');
-            hoverZone.id = 'chat-hover-zone';
-
-            // Bandeau de boutons
-            const switcher = document.createXULElement('vbox');
-            switcher.id = 'chatbot-switcher';
-
-            // Créer un bouton par chatbot
             for (const bot of CHATBOTS) {
                 const btn = document.createXULElement('toolbarbutton');
                 btn.classList.add('chatbot-btn');
@@ -191,19 +185,53 @@
                 img.setAttribute('src', iconUrl(bot.icon));
                 btn.appendChild(img);
 
-                btn.addEventListener('click', () => {
-                    this.switchTo(bot);
+                // ── 3 handlers unifiés sur mousedown ──
+                // Left → foreground, Middle → background, Right → sidebar
+                const PRINCIPAL = Services.scriptSecurityManager.getSystemPrincipal();
+                btn.addEventListener('mousedown', (e) => {
+                    if (e.button === 0) {
+                        // Left click → onglet foreground
+                        const tab = gBrowser.addTab(bot.url, { triggeringPrincipal: PRINCIPAL });
+                        gBrowser.selectedTab = tab;
+                    } else if (e.button === 1) {
+                        // Middle click → onglet background
+                        e.preventDefault();
+                        gBrowser.addTab(bot.url, { triggeringPrincipal: PRINCIPAL });
+                    } else if (e.button === 2) {
+                        // Right click → sidebar chatbot
+                        e.preventDefault();
+                        this.switchTo(bot);
+                    }
                 });
 
-                switcher.appendChild(btn);
+                // Bloquer le context menu natif (right-click)
+                btn.addEventListener('contextmenu', (e) => e.preventDefault());
+
+                dock.appendChild(btn);
             }
 
-            // Ordre important : hoverZone AVANT switcher pour le sélecteur CSS ~
-            wrapper.appendChild(hoverZone);
-            wrapper.appendChild(switcher);
-            browser.appendChild(wrapper);
+            browserEl.appendChild(dock);
+            this.log('dock injected — ' + CHATBOTS.length + ' buttons');
+        },
 
-            this.log('bandeau injected — ' + CHATBOTS.length + ' buttons');
+        // ── observeUrlbarPref ────────────────────────────
+        // Pont avec URLBar-2.0 : écoute zen.urlbar.behavior
+        // floating-on-type → dock visible / normal → dock caché
+        observeUrlbarPref() {
+            const self = this;
+            const observer = {
+                observe(subject, topic, data) {
+                    if (topic !== 'nsPref:changed' || data !== 'zen.urlbar.behavior') return;
+                    const val = Services.prefs.getStringPref('zen.urlbar.behavior', 'normal');
+                    const visible = val === 'floating-on-type';
+                    document.documentElement.setAttribute(
+                        'chat-dock-visible', visible ? 'true' : 'false'
+                    );
+                    if (visible) self.markActiveBot();
+                },
+            };
+            Services.prefs.addObserver('zen.urlbar.behavior', observer);
+            this.log('observeUrlbarPref actif (dock lié à zen.urlbar.behavior)');
         },
 
         // ═══════════════════════════════════════════════

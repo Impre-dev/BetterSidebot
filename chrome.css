@@ -63,61 +63,34 @@ html:not([chat-sidebar-visible="true"]) #zen-tabbox-wrapper #sidebar-splitter {
 }
 
 /* ────────────────────────────────────────────────────────────────
-   2. BANDEAU FLOTTANT — position:absolute sur #browser
+   2. DOCK FLOTTANT — bottom center, show/hide via attribut HTML
    ──────────────────────────────────────────────────────────────── */
 
-/* Container wrapper — positionné en absolu sur #browser */
 #chat-dock-wrapper {
     position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    height: 100% !important;
-    z-index: 9998 !important;
+    bottom: 12px !important;
+    left: 50% !important;
+    z-index: 9999 !important;
     display: flex !important;
-    align-items: center !important;
-}
+    flex-direction: row !important;
+    gap: 4px !important;
+    padding: 6px 8px !important;
+    background: linear-gradient(180deg, #5FE4BB 0%, #5FE4BB 60%, #64B2E0 100%) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
 
-/* Zone hover invisible (3px bord gauche) — centrée verticalement, hauteur = bandeau */
-#chat-hover-zone {
-    position: absolute !important;
-    left: 0 !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    width: 3px !important;
-    height: auto !important;
-    min-height: 600px !important;
-    z-index: 9998 !important;
-    background: transparent !important;
-}
-
-/* Bandeau — caché par défaut, slide-in au hover */
-#chatbot-switcher {
-    position: absolute !important;
-    left: 3px !important;
-    top: 50% !important;
-    transform: translateY(-50%) translateX(-110%) !important;
+    /* Hidden par défaut */
     opacity: 0 !important;
     pointer-events: none !important;
-    transition: transform 0.2s ease, opacity 0.2s ease !important;
-    z-index: 9999 !important;
-
-    /* Style visuel */
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 3px !important;
-    padding: 6px 5px !important;
-    background: #feca52 !important;
-    background: linear-gradient(180deg, #6CEB59 0%, #5FE4BB 50%, #64B2E0 100%) !important;
-    background: linear-gradient(180deg, #5FE4BB 0%, #5FE4BB 60%, #64B2E0 100%) !important;
-    border-radius: 0 4px 4px 0 !important;
+    transform: translateX(-50%) translateY(120%) !important;
+    transition: opacity 0.2s ease, transform 0.2s ease !important;
 }
 
-/* Hover reveal — souris sur la zone OU sur le bandeau */
-#chat-hover-zone:hover ~ #chatbot-switcher,
-#chatbot-switcher:hover {
-    transform: translateY(-50%) translateX(0) !important;
+/* Visible quand le command center est actif */
+html[chat-dock-visible="true"] #chat-dock-wrapper {
     opacity: 1 !important;
     pointer-events: auto !important;
+    transform: translateX(-50%) translateY(0) !important;
 }
 
 /* ────────────────────────────────────────────────────────────────
