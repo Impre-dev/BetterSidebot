@@ -68,16 +68,16 @@ html:not([chat-sidebar-visible="true"]) #zen-tabbox-wrapper #sidebar-splitter {
 
 #chat-dock-wrapper {
     position: absolute !important;
-    bottom: 12px !important;
+    bottom: 35px !important;
     left: 50% !important;
     z-index: 9999 !important;
     display: flex !important;
     flex-direction: row !important;
-    gap: 4px !important;
+    gap: 30px !important;
     padding: 6px 8px !important;
-    background: linear-gradient(180deg, #5FE4BB 0%, #5FE4BB 60%, #64B2E0 100%) !important;
-    border-radius: 12px !important;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
+    /* background: linear-gradient(135deg, #f2fff0 0%, #f9fff8 50%, #dcfff9 100%) !important; */
+    /* border-radius: 6px !important; */
+    /* box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important; */
 
     /* Hidden par défaut */
     opacity: 0 !important;
@@ -107,27 +107,30 @@ html[chat-dock-visible="true"] #chat-dock-wrapper {
     border-radius: 8px !important;
     cursor: pointer !important;
     border: 2px solid transparent !important;
-    transition: border-color 0.15s, background 0.15s !important;
     appearance: none !important;
     -moz-appearance: none !important;
 }
 
 .chatbot-btn image {
-    width: 29px !important;
-    height: 29px !important;
+    width: 50px !important;
+    height: 50px !important;
     margin: auto !important;
     object-fit: contain !important;
     border-radius: 6px !important;
+    transition: transform 0.15s ease !important;
 }
 
-.chatbot-btn:hover {
-    background: rgba(255, 255, 255, 0.281) !important;
+/* Hover → zoom de l'icône (pas de background) */
+.chatbot-btn:hover image {
+    transform: scale(1.16) !important;
 }
 
-.chatbot-btn:active {
-    background: rgba(255, 255, 255, 0.198) !important;
+/* Click → léger shrink */
+.chatbot-btn:active image {
+    transform: scale(1.08) !important;
 }
 
-.chatbot-btn.active {
-    background: rgba(255, 255, 255, 0.60) !important;
-}
+/* Bot actif en sidebar → bordure lumineuse */
+/* .chatbot-btn.active image {
+    filter: drop-shadow(0 0 8px rgba(255, 157, 0, 0.83)) !important;
+} */
