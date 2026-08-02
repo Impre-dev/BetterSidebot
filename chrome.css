@@ -37,13 +37,15 @@
     display: none !important;
 }
 
-/* Sidebar cachée par défaut, visible si l'attribut est présent */
-html:not([chat-sidebar-visible="true"]) #sidebar-box {
+/* Mode chat uniquement → masquage CSS qui préserve le browser en vie.
+   sidebar-mode="chat" est posé par observeSidebarCommand() (MutationObserver).
+   En mode native (sidebar-mode="native"), Firefox gère lui-même la visibilité. */
+html[sidebar-mode="chat"]:not([chat-sidebar-visible="true"]) #sidebar-box {
     display: none !important;
 }
 
-/* Quand visible, s'assurer qu'elle est en flex */
-html[chat-sidebar-visible="true"] #sidebar-box {
+/* Mode chat + visible → display:flex */
+html[sidebar-mode="chat"][chat-sidebar-visible="true"] #sidebar-box {
     display: flex !important;
 }
 
@@ -57,8 +59,8 @@ html[chat-sidebar-visible="true"] #sidebar-box {
     margin: 0 calc(-1 * var(--zen-element-separation) + 2px) !important;
 }
 
-/* sidebar-splitter : quand sidebar masquée (+3px pour neutraliser le gap) */
-html:not([chat-sidebar-visible="true"]) #zen-tabbox-wrapper #sidebar-splitter {
+/* sidebar-splitter : quand sidebar chat masquée (+3px pour neutraliser le gap) */
+html[sidebar-mode="chat"]:not([chat-sidebar-visible="true"]) #zen-tabbox-wrapper #sidebar-splitter {
     margin: 0 calc(-1 * var(--zen-element-separation) + 2.7px) !important;
 }
 

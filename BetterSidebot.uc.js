@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           BetterSidebot
-// @version        1.0.0
+// @version        2.0.0
 // @description    Bandeau flottant pour switcher entre tous tes chatbots dans la sidebar Zen
 // @author         Impre
 // @include        main
@@ -82,7 +82,10 @@
             // 7. Observer les changements de pref (si changés via about:config)
             this.observeProviderPref();
 
-            this.log('initialized ✅ — ' + CHATBOTS.length + ' bots ready');
+            // 8. Observer les changements de sidebarcommand (chat ↔ extensions)
+            this.observeSidebarCommand();
+
+            this.log('initialized ✅ v2.0 — ' + CHATBOTS.length + ' bots ready');
         },
 
         // ═══════════════════════════════════════════════
@@ -148,10 +151,38 @@
         },
 
         // ── toggleSidebar ────────────────────────────────
+        // Alt+K = raccourci universel adaptatif :
+        // - Mode chat → CSS toggle (préserve le browser en vie)
+        // - Mode native, sidebar ouverte → fermeture native
+        // - Sidebar fermée → reopen avec le dernier chatbot
         toggleSidebar() {
-            const isVisible = document.documentElement.getAttribute('chat-sidebar-visible') === 'true';
-            if (isVisible) this.hideSidebar();
-            else            this.showSidebar();
+            const box = document.getElementById('sidebar-box');
+            const isChat = box?.getAttribute('sidebarcommand') === 'viewGenaiChatSidebar';
+            const controller = window.SidebarController;
+
+            if (isChat) {
+                // Mode chat → CSS toggle (préserve le browser en vie)
+                const isVisible = document.documentElement.getAttribute('chat-sidebar-visible') === 'true';
+                if (isVisible) this.hideSidebar();
+                else            this.showSidebar();
+            } else if (controller?.isOpen) {
+                // Mode native, sidebar ouverte → fermeture native
+                this.log('native sidebar hide (non-chat mode)');
+                controller.hide();
+            } else if (controller) {
+                // Sidebar fermée → rouvrir le DERNIER panel utilisé (chat ou autre)
+                const lastCmd = this._lastCommand || 'viewGenaiChatSidebar';
+                this.log('reopening last sidebar panel: ' + lastCmd);
+                controller.show(lastCmd).then(() => {
+                    // Si c'était le chat → appliquer notre visibilité CSS
+                    if (lastCmd === 'viewGenaiChatSidebar') {
+                        this.showSidebar();
+                        this.markActiveBot();
+                    }
+                }).catch(e => this.log('⚠️ reopen failed: ' + e.message));
+            } else {
+                this.log('⚠️ no SidebarController available');
+            }
         },
 
         // ═══════════════════════════════════════════════
@@ -239,25 +270,51 @@
         // ═══════════════════════════════════════════════
 
         // ── switchTo ─────────────────────────────────────
-        // Change la pref + reload la sidebar + marque actif + affiche sidebar
-        switchTo(bot) {
+        // Change la pref + restore le sidebar chat si nécessaire + reload + affiche
+        // Utilise SidebarController.show() pour restaurer proprement le browser chat
+        // quand une extension (ColorTrip, etc.) a pris le sidebar.
+        async switchTo(bot) {
             this.log('switching to: ' + bot.name + ' (' + bot.url + ')');
 
-            // 1. Changer la pref officielle Firefox
+            // 1. Changer la pref officielle Firefox (AVANT tout pour que chat.html la lise)
             Services.prefs.setStringPref(PREF_PROVIDER, bot.url);
 
-            // 2. Reload le browser sidebar pour charger le nouveau chatbot
-            const sidebarBrowser = document.getElementById('sidebar');
-            if (sidebarBrowser) {
-                sidebarBrowser.reload();
+            const box = document.getElementById('sidebar-box');
+            const isChatCommand = box?.getAttribute('sidebarcommand') === 'viewGenaiChatSidebar';
+
+            if (isChatCommand) {
+                // Déjà sur le chat → reload pour charger le nouveau provider
+                const sidebarBrowser = document.getElementById('sidebar');
+                if (sidebarBrowser) {
+                    sidebarBrowser.reload();
+                } else {
+                    this.log('⚠️ #sidebar browser not found!');
+                }
+            } else if (window.SidebarController?.show) {
+                // Pas sur le chat → SidebarController.show() charge chat.html frais
+                // qui lira la pref provider qu'on vient de définir
+                this.log('restoring chat sidebar via SidebarController.show()');
+                try {
+                    await window.SidebarController.show('viewGenaiChatSidebar');
+                } catch (e) {
+                    this.log('⚠️ SidebarController.show() failed: ' + e.message);
+                    // Fallback manuel
+                    box.setAttribute('sidebarcommand', 'viewGenaiChatSidebar');
+                    const sb = document.getElementById('sidebar');
+                    if (sb) sb.src = 'chrome://browser/content/genai/chat.html';
+                }
             } else {
-                this.log('⚠️ #sidebar browser not found!');
+                // Fallback sans SidebarController
+                this.log('fallback: manual sidebarcommand + src');
+                box.setAttribute('sidebarcommand', 'viewGenaiChatSidebar');
+                const sb = document.getElementById('sidebar');
+                if (sb) sb.src = 'chrome://browser/content/genai/chat.html';
             }
 
-            // 3. Marquer le bouton actif
+            // 2. Marquer le bouton actif
             this.markActiveBot(bot.id);
 
-            // 4. Afficher la sidebar
+            // 3. Afficher la sidebar (CSS show)
             this.showSidebar();
         },
 
@@ -336,6 +393,57 @@
                 }
             };
             Services.prefs.addObserver(PREF_PROVIDER, observer);
+        },
+
+        // ═══════════════════════════════════════════════
+        // SIDEBAR COMMAND OBSERVER
+        // ═══════════════════════════════════════════════
+
+        // ── observeSidebarCommand ───────────────────────
+        // MutationObserver sur sidebarcommand de #sidebar-box.
+        // Détecte quand une extension (ColorTrip, etc.) prend la sidebar
+        // ou quand on revient au chat. Pose l'attribut sidebar-mode pour le CSS.
+        // Zero polling : ne se déclenche QUE quand sidebarcommand change.
+        observeSidebarCommand() {
+            const box = document.getElementById('sidebar-box');
+            if (!box) {
+                this.log('#sidebar-box not found for observer, retrying...');
+                setTimeout(() => this.observeSidebarCommand(), 1000);
+                return;
+            }
+
+            const update = () => {
+                const cmd = box.getAttribute('sidebarcommand');
+                const isChat = cmd === 'viewGenaiChatSidebar';
+
+                // Mémoriser le dernier command non-vide (pour le reopen d'Alt+K)
+                if (cmd) {
+                    this._lastCommand = cmd;
+                }
+
+                // Pose l'attribut sidebar-mode pour le CSS
+                document.documentElement.setAttribute('sidebar-mode', isChat ? 'chat' : 'native');
+
+                // Si on quitte le mode chat → retirer notre masquage CSS
+                // pour que le nouveau contenu (ColorTrip, bookmarks, etc.) soit visible
+                if (!isChat) {
+                    document.documentElement.removeAttribute('chat-sidebar-visible');
+                }
+
+                this.log('sidebar-mode → ' + (isChat ? 'chat' : 'native') + ' (command: ' + cmd + ')');
+            };
+
+            // Observer UNIQUEMENT l'attribut sidebarcommand — zero polling
+            const observer = new MutationObserver(update);
+            observer.observe(box, {
+                attributes: true,
+                attributeFilter: ['sidebarcommand']
+            });
+
+            // État initial
+            update();
+
+            this.log('observeSidebarCommand actif (MutationObserver sur sidebarcommand)');
         },
     };
 
